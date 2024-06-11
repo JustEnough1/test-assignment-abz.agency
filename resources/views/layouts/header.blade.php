@@ -7,13 +7,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Register User</a>
+                    <a class="nav-link" href="/">Register New User</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Get Token</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">List of Users</a>
+                    <a class="nav-link" href="/users">Show More Users</a>
                 </li>
             </ul>
         </div>

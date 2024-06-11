@@ -3,5 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('index');
+    return view('register');
+});
+
+Route::get("/users", function () {
+    return view('users');
 });
