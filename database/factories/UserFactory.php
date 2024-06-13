@@ -31,7 +31,7 @@ class UserFactory extends Factory
     private function generatePhoneNumber()
     {
         $countryCode = '+380';
-        $phoneNumberFormat = $countryCode . ' ### ### ####';
+        $phoneNumberFormat = $countryCode . '#########';
         return fake()->unique()->numerify($phoneNumberFormat);
     }
 }

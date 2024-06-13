@@ -1,33 +1,14 @@
 <?php
 
-use App\Http\Requests\UsersRequest;
-use App\Http\Resources\UsersListResource;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Controllers\PositionController;
+use App\Http\Controllers\TokenController;
+use App\Http\Controllers\UserController;
+use App\Http\Middleware\ValidateRegistrationToken;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-
-
 Route::prefix("/v1")->group(function () {
-    Route::get('/users', function (UsersRequest $request) {
-
-        $perPage = $request->input('count', 6);
-        $currentPage = $request->input('page', 1);
-
-        $paginator = User::with('position')->paginate($perPage);
-
-        // Check if page exists
-        if ($currentPage > $paginator->lastPage()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Page not found',
-            ], 404);
-        }
-
-        return new UsersListResource($paginator);
-    });
+    Route::get('/users', [UserController::class, "listUsers"]);
+    Route::get('/token', [TokenController::class, "generateToken"]);
+    Route::get('/positions', [PositionController::class, "listPositions"]);
+    Route::post('/users', [UserController::class, "createUser"])->middleware(ValidateRegistrationToken::class);
 });
