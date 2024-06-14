@@ -66,7 +66,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body">
-            New user created!
+            <h5>New user created!</h5>
+            <ul id="user-created-body"></ul>
         </div>
     </div>
 </div>
@@ -104,13 +105,8 @@
     })
 
     // Create user
-    userForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        loader.classList.remove('d-none')
-
-        const token = document.getElementById('token').value;
+    function createFormData() {
         const photo = document.getElementById('photo').files[0];
-
         const formData = new FormData();
 
         formData.append('name', document.getElementById('name').value)
@@ -119,8 +115,22 @@
         formData.append('position_id', document.getElementById('position').value)
         formData.append('photo', photo)
 
+        return formData
+    }
+
+    function createHeaders() {
+        const token = document.getElementById('token').value;
+
         const headers = new Headers()
         headers.append('Authorization', `Bearer ${token}`)
+
+        return headers
+    }
+
+    async function postUser() {
+
+        const headers = createHeaders()
+        const formData = createFormData()
 
         const response = await fetch('/api/v1/users', {
             method: "POST",
@@ -130,21 +140,52 @@
 
         const result = await response.json();
 
-        loader.classList.add('d-none')
         if (!response.ok) {
-            if (result.fails) {
-                document.getElementById('fails').classList.remove('d-none')
-                document.getElementById('fails').innerText = ''
-                Object.values(result.fails).map((message) => {
-                    document.getElementById('fails').innerText += message + '\n'
-                })
+            if (result.fails) displayFails(result.fails)
+        }
 
-            }
+        return result;
+    }
+
+    // Display created user
+    function displayFails(fails) {
+        document.getElementById('fails').classList.remove('d-none')
+        document.getElementById('fails').innerText = ''
+        Object.values(fails).map((message) => {
+            document.getElementById('fails').innerText += message + '\n'
+        })
+    }
+
+    async function getUser(id) {
+        const response = await fetch('/api/v1/users/' + id)
+        const result = await response.json()
+        return result.user
+    }
+
+    function createToast(user) {
+        document.getElementById('user-created-body').innerHTML = ''
+        document.getElementById('user-created-toast').classList.add('show')
+        Object.entries(user).map(([key, value]) => {
+            document.getElementById('user-created-body').innerHTML += `<li>${key} - ${value}</li>`
+        })
+    }
+
+    userForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        document.getElementById('fails').classList.add('d-none')
+        loader.classList.remove('d-none')
+        const result = await postUser()
+
+        if (!result.success) {
+            loader.classList.add('d-none')
             return alert(result.message)
         }
 
-        document.getElementById('user-created-toast').classList.add('show')
+        const user = await getUser(result.user_id)
+        loader.classList.add('d-none')
 
+        if (user) createToast(user)
+        clearFails()
     })
 </script>
 @endsection

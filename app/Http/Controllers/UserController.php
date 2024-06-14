@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\GetUsersRequest;
+use App\Http\Resources\UserResource;
 use App\Http\Resources\UsersListResource;
 use App\Models\User;
 use App\Services\ImageProcessingService;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -47,6 +49,37 @@ class UserController extends Controller
             'success' => true,
             'user_id' => $user->id,
             'message' => 'New user successfully registered'
+        ]);
+    }
+
+    function getUser($id)
+    {
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|integer',
+        ]);
+
+        // Check if id is integer
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The user with the requestedid does not exist',
+                'fails' => $validator->errors()
+            ]);
+        }
+
+        $user = User::find($id);
+
+        // Check if user exists
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'user' => new UserResource($user)
         ]);
     }
 }
