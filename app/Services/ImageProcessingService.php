@@ -12,6 +12,7 @@ class ImageProcessingService
         Tinify::setKey(env('TINIFY_API_KEY'));
     }
 
+    // Image compression and resizing
     function optimizeImage($image)
     {
         $fileName =  uniqid() . '.jpg';
@@ -20,7 +21,7 @@ class ImageProcessingService
         $sourceImage = $this->compressImage($image);
         $resizedImage = $this->resizeImage($sourceImage);
 
-        $resizedImage->toFile($path);
+        $resizedImage->toFile($path); // save file
         return $fileName;
     }
 
@@ -30,6 +31,7 @@ class ImageProcessingService
         return $source;
     }
 
+    // Crop image 70x70 px 
     function resizeImage($source)
     {
         $resizedImage = $source->resize(

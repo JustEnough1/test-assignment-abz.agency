@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 class TokenService
 {
+
+    // Create and store a new token
     function create()
     {
         $token = Str::random(100);

@@ -10,6 +10,7 @@ class PositionController extends Controller
     {
         $allPositions = Position::all(['id', 'name']);
 
+        // Check if position exists
         if ($allPositions->count() === 0) {
             return response()->json([
                 'success' => false,
@@ -18,7 +19,7 @@ class PositionController extends Controller
         }
 
         return response()->json([
-            'success' => false,
+            'success' => true,
             'positions' => $allPositions,
         ]);
     }

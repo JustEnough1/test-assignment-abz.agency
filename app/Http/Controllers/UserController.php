@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    // List users with pagination
     function listUsers(GetUsersRequest $request)
     {
         $perPage = $request->input('count', 6);
